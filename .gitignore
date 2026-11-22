@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# 本地测试 / 调试产物
+.tmp/
+.probe/
+.guard-fixture/
+*.log
+
+# 操作系统
+.DS_Store
+Thumbs.db
+desktop.ini

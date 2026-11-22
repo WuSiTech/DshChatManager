@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>DSH 对话管理器</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="page">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">D</span>
+        <div class="brand-text">
+          <h1>DSH 对话管理器</h1>
+          <p>查看并删除 DeepSeek Harness 的工作区与对话</p>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <span id="status-pill" class="pill pill-muted" role="status">
+          <span class="pill-dot"></span><span id="status-text">正在检测…</span>
+        </span>
+        <button id="refresh" class="btn btn-ghost" type="button" title="重新读取数据并检测 DSH">
+          <span class="icon" aria-hidden="true">↻</span> 刷新
+        </button>
+      </div>
+    </header>
+
+    <section id="banner" class="banner" hidden>
+      <div class="banner-icon" aria-hidden="true">!</div>
+      <div class="banner-body">
+        <h2 id="banner-title">检测到 DSH 正在运行，删除已锁定</h2>
+        <p id="banner-desc">请先完全退出 DeepSeek Harness，然后点击右侧「重新检测」。</p>
+        <ul id="banner-tips" class="banner-tips">
+          <li>关闭所有 DSH 窗口，并右键托盘图标选择「退出」</li>
+          <li>必要时在任务管理器中结束 <code>DeepSeek Harness.exe</code></li>
+        </ul>
+        <div id="banner-procs" class="banner-procs" hidden></div>
+      </div>
+      <button id="recheck" class="btn btn-warn" type="button">重新检测</button>
+    </section>
+
+    <section class="toolbar" aria-label="工具栏">
+      <div class="search-box">
+        <span class="search-icon" aria-hidden="true">⌕</span>
+        <input id="search" type="search" autocomplete="off" spellcheck="false"
+               placeholder="搜索工作区名称、对话标题或 ID" aria-label="搜索">
+      </div>
+      <div class="toolbar-actions">
+        <button id="select-all" class="btn btn-ghost" type="button" title="勾选所有对话（不含工作区）">全选对话</button>
+        <button id="clear-selection" class="btn btn-ghost" type="button">清空</button>
+        <button id="expand-all" class="btn btn-ghost" type="button">展开</button>
+        <button id="collapse-all" class="btn btn-ghost" type="button">折叠</button>
+      </div>
+    </section>
+
+    <section class="actionbar" aria-live="polite">
+      <div class="selection-summary">
+        <span id="selection-text">尚未选择任何内容</span>
+        <span id="lock-hint" class="lock-hint" hidden>DSH 正在运行，删除已锁定</span>
+      </div>
+      <button id="delete-selected" class="btn btn-danger" type="button" disabled>
+        删除所选
+      </button>
+    </section>
+
+    <main id="list" class="list" aria-live="polite">
+      <div class="loading">
+        <div class="spinner" aria-hidden="true"></div>
+        <p>正在读取 DSH 数据…</p>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-row">
+        <span class="footer-label">数据目录</span>
+        <code id="home-path">—</code>
+      </div>
+      <div class="footer-row">
+        <span class="footer-label">删除前备份</span>
+        <code id="backup-dir">—</code>
+      </div>
+      <div class="footer-row footer-stats">
+        <span id="stats-text"></span>
+        <span class="footer-note">删除工作区不会删除磁盘上的项目文件夹；删除操作不可撤销。</span>
+      </div>
+    </footer>
+  </div>
+
+  <dialog id="confirm-dialog" class="dialog" aria-labelledby="dialog-title">
+    <form method="dialog" class="dialog-inner">
+      <div class="dialog-head">
+        <span class="dialog-icon" aria-hidden="true">!</span>
+        <div>
+          <h2 id="dialog-title">确认永久删除</h2>
+          <p id="dialog-subtitle" class="dialog-subtitle"></p>
+        </div>
+      </div>
+      <div id="dialog-body" class="dialog-body"></div>
+      <p class="dialog-warning" id="dialog-warning">
+        删除后无法恢复。工作区所指向的磁盘文件夹不会被删除。
+      </p>
+      <div class="dialog-actions">
+        <button value="cancel" class="btn btn-ghost" type="submit" formnovalidate>取消</button>
+        <button id="dialog-confirm" value="confirm" class="btn btn-danger" type="submit">永久删除</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" hidden>
+    <span id="toast-icon" class="toast-icon" aria-hidden="true">✓</span>
+    <span id="toast-text"></span>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
